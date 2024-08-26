@@ -21,12 +21,12 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.museumartapp.R
-import com.example.museumartapp.domain.models.ArtMuseum
+import com.example.museumartapp.domain.models.Record
 import com.example.museumartapp.ui.theme.MuseumArtAppTheme
 
 @Composable
 fun ArtDetail(
-    artMuseum: ArtMuseum
+    record: Record
 ) {
     val context = LocalContext.current
     Card(
@@ -40,7 +40,7 @@ fun ArtDetail(
             modifier = Modifier
         ) {
             AsyncImage(
-                model = ImageRequest.Builder(context = context).data(artMuseum.baseimageurl).build(),
+                model = ImageRequest.Builder(context = context).data(record.baseimageurl).build(),
                 contentDescription = "",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.height(150.dp).clip(MaterialTheme.shapes.medium)
@@ -56,12 +56,14 @@ fun ArtDetail(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(text = "Technique")
-                    Text(text = artMuseum.date)
+                    record.date?.let { Text(text = it) }
                 }
-                Text(
-                    text = artMuseum.technique,
-                    style = MaterialTheme.typography.displaySmall
-                )
+                record.technique?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.displaySmall
+                    )
+                }
             }
         }
     }
@@ -72,7 +74,7 @@ fun ArtDetail(
 fun ArtDetailPreview() {
     MuseumArtAppTheme {
         ArtDetail(
-            artMuseum = ArtMuseum(
+            record = Record(
                 1,
                 "",
                 "1998-02-01",
