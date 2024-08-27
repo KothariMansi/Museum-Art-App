@@ -1,7 +1,11 @@
 package com.example.museumartapp.di
 
+import android.app.Application
+import androidx.room.Room
 import com.example.museumartapp.Constants.BASE_URL
 import com.example.museumartapp.data.ApiService
+import com.example.museumartapp.data.local.ArtDatabase
+import com.example.museumartapp.data.local.Dao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,5 +25,21 @@ object AppModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDatabase(application: Application): ArtDatabase {
+        return Room.databaseBuilder(
+            context = application,
+            ArtDatabase::class.java,
+            "artDatabase.db"
+        ).fallbackToDestructiveMigration().build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideArtDao(database: ArtDatabase): Dao {
+        return database.dao
     }
 }

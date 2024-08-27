@@ -1,13 +1,19 @@
 package com.example.museumartapp.presentation.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,25 +32,44 @@ import com.example.museumartapp.ui.theme.MuseumArtAppTheme
 
 @Composable
 fun ArtDetail(
-    record: Record
+    record: Record,
+    selected: Boolean,
+    onClick: () -> Unit,
 ) {
     val context = LocalContext.current
     Card(
-        modifier = Modifier.padding(8.dp).clip(MaterialTheme.shapes.medium),
+        modifier = Modifier
+            .padding(8.dp)
+            .clip(MaterialTheme.shapes.medium),
         colors = CardDefaults.cardColors(
             containerColor = colorResource(id = R.color.md_theme_secondary),
             contentColor = colorResource(id = R.color.md_theme_onSecondary)
         )
     ) {
+
         Column(
             modifier = Modifier
         ) {
-            AsyncImage(
-                model = ImageRequest.Builder(context = context).data(record.baseimageurl).build(),
-                contentDescription = "",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.height(150.dp).clip(MaterialTheme.shapes.medium)
-            )
+            Box(modifier = Modifier) {
+                AsyncImage(
+                    model = ImageRequest.Builder(context = context).data(record.baseimageurl).build(),
+                    contentDescription = "",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .height(150.dp)
+                        .clip(MaterialTheme.shapes.medium)
+                )
+                Icon(
+                    imageVector = if (!selected) Icons.Default.FavoriteBorder else Icons.Default.Favorite,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(start = 340.dp, top = 8.dp)
+                        .clickable {
+                            onClick()
+                        }
+                )
+            }
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -79,7 +104,7 @@ fun ArtDetailPreview() {
                 "",
                 "1998-02-01",
                 "Kodak Ektapan"
-            )
-        )
+            ), false
+        ) {}
     }
 }

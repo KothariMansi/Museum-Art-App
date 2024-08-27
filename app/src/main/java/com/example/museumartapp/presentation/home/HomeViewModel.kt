@@ -1,10 +1,11 @@
-package com.example.museumartapp.presentation
+package com.example.museumartapp.presentation.home
 
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.museumartapp.data.local.Dao
 import com.example.museumartapp.domain.models.Record
 import com.example.museumartapp.repository.ArtRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val artRepository: ArtRepository
+    private val artRepository: ArtRepository,
+    private val dao: Dao
 ): ViewModel() {
 
     init {
@@ -26,14 +28,13 @@ class HomeViewModel @Inject constructor(
     val recordData : LiveData<List<Record>> get()  = _recordData
      private fun artMuseum() {
          viewModelScope.launch {
-
              try {
                  val response = withContext(Dispatchers.IO) {
                      artRepository.getArtData().execute()
                  }
                  if (response.isSuccessful) {
-                     response.body()?.records?.let { recordList ->
-                         val recordList = recordList.map {
+                     response.body()?.records?.let { records ->
+                         val recordList = records.map {
                              Record(
                                  it.id, it.baseimageurl, it.date, it.technique
                              )
@@ -50,5 +51,11 @@ class HomeViewModel @Inject constructor(
              }
          }
      }
+
+    fun addArt(artMuseum: Record) {
+        viewModelScope.launch {
+            dao.addArt(artMuseum)
+        }
+    }
 
 }
